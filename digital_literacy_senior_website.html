@@ -1,0 +1,557 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); background: var(--color-background-tertiary); }
+
+  .site { max-width: 900px; margin: 0 auto; padding: 1rem; }
+
+  .header {
+    background: #1a5c3a;
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .header-icon { font-size: 28px; }
+  .header h1 { color: #fff; font-size: 24px; font-weight: 500; line-height: 1.3; }
+  .header p { color: rgba(255,255,255,0.8); font-size: 16px; margin-top: 4px; }
+
+  .nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  .nav-btn {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem 0.5rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s, border-color 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-btn:hover { background: var(--color-background-secondary); border-color: var(--color-border-secondary); }
+  .nav-btn.active { border: 2px solid #1a5c3a; }
+  .nav-btn .icon { font-size: 28px; }
+  .nav-btn .label { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+
+  .content { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); padding: 1.5rem; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-title { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+
+  .lesson-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+
+  .lesson-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+    cursor: pointer;
+    border: 0.5px solid var(--color-border-tertiary);
+    transition: border-color 0.15s;
+    text-align: center;
+  }
+  .lesson-card:hover { border-color: #1a5c3a; }
+  .lesson-card .lesson-icon { font-size: 36px; margin-bottom: 8px; }
+  .lesson-card .lesson-name { font-size: 17px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+  .lesson-card .lesson-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+  .lesson-card .lesson-level { display: inline-block; margin-top: 10px; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+  .level-easy { background: #e1f5ee; color: #0f6e56; }
+  .level-medium { background: #faeeda; color: #854f0b; }
+
+  .tip-box {
+    background: #e1f5ee;
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .tip-box .tip-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+  .tip-box .tip-text { font-size: 16px; color: #085041; line-height: 1.6; }
+  .tip-box .tip-title { font-size: 17px; font-weight: 500; color: #085041; margin-bottom: 4px; }
+
+  .warning-box {
+    background: #fcebeb;
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .warning-box .tip-icon { font-size: 24px; flex-shrink: 0; }
+  .warning-box .tip-title { font-size: 17px; font-weight: 500; color: #a32d2d; margin-bottom: 4px; }
+  .warning-box .tip-text { font-size: 16px; color: #791f1f; line-height: 1.6; }
+
+  .help-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 10px;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .help-icon { font-size: 28px; flex-shrink: 0; }
+  .help-text .help-q { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+  .help-text .help-a { font-size: 14px; color: var(--color-text-secondary); margin-top: 4px; line-height: 1.5; }
+
+  .font-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .font-label { font-size: 14px; color: var(--color-text-secondary); }
+  .font-btn {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 6px 14px;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    transition: background 0.15s;
+  }
+  .font-btn:hover { background: var(--color-background-secondary); }
+  .font-btn.active-size { background: #1a5c3a; color: #fff; border-color: #1a5c3a; }
+
+  .progress-bar-wrap { height: 8px; background: var(--color-background-secondary); border-radius: 4px; margin-top: 8px; }
+  .progress-bar { height: 8px; background: #1a5c3a; border-radius: 4px; transition: width 0.4s; }
+
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+  .badge-green { background: #e1f5ee; color: #0f6e56; }
+  .badge-amber { background: #faeeda; color: #854f0b; }
+
+  .quiz-card { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.5rem; margin-top: 1rem; }
+  .quiz-q { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 1rem; }
+  .quiz-options { display: grid; gap: 8px; }
+  .quiz-opt {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--color-text-primary);
+    text-align: left;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .quiz-opt:hover { background: #e1f5ee; border-color: #1a5c3a; }
+  .quiz-opt.correct { background: #e1f5ee; border-color: #1a5c3a; color: #085041; }
+  .quiz-opt.wrong { background: #fcebeb; border-color: #a32d2d; color: #791f1f; }
+  .quiz-result { margin-top: 1rem; font-size: 16px; padding: 0.75rem 1rem; border-radius: var(--border-radius-md); }
+  .quiz-result.correct { background: #e1f5ee; color: #085041; }
+  .quiz-result.wrong { background: #fcebeb; color: #791f1f; }
+</style>
+
+<div class="site" id="mainSite">
+
+  <div class="header">
+    <div class="header-icon">📱</div>
+    <div>
+      <h1>Цахим Сурагч</h1>
+      <p>Ахмад настан та нарт зориулсан интернет сургалт</p>
+    </div>
+  </div>
+
+  <div class="font-controls">
+    <span class="font-label">Үсгийн хэмжээ:</span>
+    <button class="font-btn" onclick="setFont('normal')">Жижиг А</button>
+    <button class="font-btn active-size" onclick="setFont('large')">Том А</button>
+    <button class="font-btn" onclick="setFont('xlarge')">Маш том А</button>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showSection('home')">
+      <span class="icon">🏠</span><span class="label">Нүүр</span>
+    </button>
+    <button class="nav-btn" onclick="showSection('lessons')">
+      <span class="icon">📚</span><span class="label">Хичээл</span>
+    </button>
+    <button class="nav-btn" onclick="showSection('safety')">
+      <span class="icon">🛡️</span><span class="label">Аюулгүй байдал</span>
+    </button>
+    <button class="nav-btn" onclick="showSection('quiz')">
+      <span class="icon">✏️</span><span class="label">Шалгалт</span>
+    </button>
+    <button class="nav-btn" onclick="showSection('help')">
+      <span class="icon">❓</span><span class="label">Тусламж</span>
+    </button>
+  </nav>
+
+  <div class="content" id="mainContent">
+
+    <div class="section active" id="section-home">
+      <p class="section-title">Сайн байна уу! Юу сурахыг хүсч байна?</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 1.5rem;">
+        <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.25rem; text-align: center; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="font-size: 32px; margin-bottom: 8px;">🎓</div>
+          <div style="font-size: 16px; font-weight: 500; color: var(--color-text-primary);">Нийт хичээл</div>
+          <div style="font-size: 28px; font-weight: 500; color: #1a5c3a; margin-top: 4px;">9</div>
+        </div>
+        <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.25rem; text-align: center; border: 0.5px solid var(--color-border-tertiary);">
+          <div style="font-size: 32px; margin-bottom: 8px;">⭐</div>
+          <div style="font-size: 16px; font-weight: 500; color: var(--color-text-primary);">Таны явц</div>
+          <div style="font-size: 28px; font-weight: 500; color: #1a5c3a; margin-top: 4px;" id="progressNum">0%</div>
+          <div class="progress-bar-wrap" style="margin-top: 10px;"><div class="progress-bar" id="progressBar" style="width: 0%;"></div></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 0.5rem;">
+        <div class="tip-box">
+          <div class="tip-icon">💡</div>
+          <div>
+            <div class="tip-title">Өнөөдрийн зөвлөмж</div>
+            <div class="tip-text">Интернэт дэх үл мэдэх хүнд хувийн мэдээллээ өгч болохгүй. Утасны дугаар, нууц үгээ хэзээ ч мессежээр бичиж илгээж болохгүй.</div>
+          </div>
+        </div>
+        <div class="tip-box" style="background: #e6f1fb;">
+          <div class="tip-icon">📋</div>
+          <div>
+            <div class="tip-title" style="color: #0c447c;">Хурдан холбоосууд</div>
+            <div class="tip-text" style="color: #185fa5;">
+              Судалгаагаас харахад та нарт хамгийн хэрэгтэй зүйлс:<br>
+              <span style="font-weight: 500;">Видео дуудлага • Аппликэйшн татах • Төрийн үйлчилгээ онлайнаар авах</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="section-lessons">
+      <p class="section-title">📚 Хичээлүүд</p>
+      <div class="lesson-grid">
+        <div class="lesson-card" onclick="openLesson('videocall')">
+          <div class="lesson-icon">📹</div>
+          <div class="lesson-name">Видео дуудлага хийх</div>
+          <div class="lesson-desc">Хүүхэд, найз нөхөдтэйгээ нүүр тулан ярих</div>
+          <span class="lesson-level level-easy">Амархан</span>
+        </div>
+        <div class="lesson-card" onclick="openLesson('app')">
+          <div class="lesson-icon">📲</div>
+          <div class="lesson-name">Аппликэйшн татах</div>
+          <div class="lesson-desc">Play Store / App Store-с аппликэйшн суулгах</div>
+          <span class="lesson-level level-easy">Амархан</span>
+        </div>
+        <div class="lesson-card" onclick="openLesson('egov')">
+          <div class="lesson-icon">🏛️</div>
+          <div class="lesson-name">Е-Засаг үйлчилгээ</div>
+          <div class="lesson-desc">Тэтгэвэр, лавлагаа, бүртгэлийг онлайнаар авах</div>
+          <span class="lesson-level level-medium">Дунд</span>
+        </div>
+        <div class="lesson-card" onclick="openLesson('search')">
+          <div class="lesson-icon">🔍</div>
+          <div class="lesson-name">Мэдээлэл хайх</div>
+          <div class="lesson-desc">Google-ээс эрүүл мэнд, мэдээ, зааварчилгаа хайх</div>
+          <span class="lesson-level level-easy">Амархан</span>
+        </div>
+        <div class="lesson-card" onclick="openLesson('photo')">
+          <div class="lesson-icon">📸</div>
+          <div class="lesson-name">Зураг, видео илгээх</div>
+          <div class="lesson-desc">Авсан зургаа хүүхдүүдэд мессежээр дамжуулах</div>
+          <span class="lesson-level level-easy">Амархан</span>
+        </div>
+        <div class="lesson-card" onclick="openLesson('password')">
+          <div class="lesson-icon">🔒</div>
+          <div class="lesson-name">Нууц үг солих</div>
+          <div class="lesson-desc">Утасны болон аппликэйшны нууц үгийг аюулгүй болгох</div>
+          <span class="lesson-level level-medium">Дунд</span>
+        </div>
+        <div class="lesson-card" onclick="openLesson('shop')">
+          <div class="lesson-icon">🛒</div>
+          <div class="lesson-name">Онлайн худалдаа</div>
+          <div class="lesson-desc">Итгэлтэй сайтаас аюулгүй захиалга хийх</div>
+          <span class="lesson-level level-medium">Дунд</span>
+        </div>
+        <div class="lesson-card" onclick="openLesson('bank')">
+          <div class="lesson-icon">🏦</div>
+          <div class="lesson-name">Банкны аппликэйшн</div>
+          <div class="lesson-desc">Гүйлгээ хийх, балансаа шалгах</div>
+          <span class="lesson-level level-medium">Дунд</span>
+        </div>
+        <div class="lesson-card" onclick="openLesson('settings')">
+          <div class="lesson-icon">⚙️</div>
+          <div class="lesson-name">Утасны тохиргоо</div>
+          <div class="lesson-desc">Гэрэл, дуу, фонтыг өөрийн хэрэгцээнд тааруулах</div>
+          <span class="lesson-level level-easy">Амархан</span>
+        </div>
+      </div>
+      <div id="lessonDetail" style="margin-top: 1.5rem; display: none;"></div>
+    </div>
+
+    <div class="section" id="section-safety">
+      <p class="section-title">🛡️ Цахим аюулгүй байдал</p>
+      <div class="warning-box">
+        <div class="tip-icon">⚠️</div>
+        <div>
+          <div class="tip-title">Луйварт болгоомжилж!</div>
+          <div class="tip-text">Интернэтэд луйварчид их байдаг. Доорх анхааруулгуудыг сайн уншаарай.</div>
+        </div>
+      </div>
+      <div class="tip-box" style="margin-top: 4px;">
+        <div class="tip-icon">🚫</div>
+        <div>
+          <div class="tip-title">Хэзээ ч болохгүй зүйлс</div>
+          <div class="tip-text">
+            ✗ Нууц үгээ хэн нэгэнд хэлэх<br>
+            ✗ Утасны дугаараа мессежээр илгээх<br>
+            ✗ Үл мэдэх холбоос дээр дарах<br>
+            ✗ Гэнэт ирсэн "байрны дугаараас" мөнгө гуйх дуудлага хүлээн авах
+          </div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-icon">✅</div>
+        <div>
+          <div class="tip-title">Аюулгүй байх арга</div>
+          <div class="tip-text">
+            ✓ Нууц үгээ 6-оос дээш оронтой тоогоор хий<br>
+            ✓ Нуц үгээ жилд нэг удаа солих<br>
+            ✓ Итгэлгүй зүйл гарвал хүүхдүүддээ асуу<br>
+            ✓ Зөвхөн танил сайтуудаас худалдаа хий
+          </div>
+        </div>
+      </div>
+      <div class="tip-box" style="background: #faeeda;">
+        <div class="tip-icon">📞</div>
+        <div>
+          <div class="tip-title" style="color: #854f0b;">Асуудал гарвал залгах дугаарууд</div>
+          <div class="tip-text" style="color: #854f0b;">
+            Цагдаагийн ерөнхий дугаар: <strong>102</strong><br>
+            Цахим гэмт хэрэг: <strong>1800-1234</strong><br>
+            Мэдээлэл технологийн газар: <strong>1800-1777</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="section-quiz">
+      <p class="section-title">✏️ Мэдлэгээ шалгах</p>
+      <div id="quizContainer"></div>
+    </div>
+
+    <div class="section" id="section-help">
+      <p class="section-title">❓ Түгээмэл асуулт хариулт</p>
+      <div class="help-row">
+        <div class="help-icon">📶</div>
+        <div class="help-text">
+          <div class="help-q">Интернэт тасарвал яах вэ?</div>
+          <div class="help-a">Утсаа унтраад дахин асааж үз. Ажлахгүй бол холбооны операторт залга: MobiCom 1212, Skytel 1212</div>
+        </div>
+      </div>
+      <div class="help-row">
+        <div class="help-icon">🔋</div>
+        <div class="help-text">
+          <div class="help-q">Утасны батарей хурдан дуусдаг</div>
+          <div class="help-a">Дэлгэцийн гэрлийг бага болго. Ашиглахгүй байгаа аппликэйшнуудыг хааж тавь.</div>
+        </div>
+      </div>
+      <div class="help-row">
+        <div class="help-icon">🔤</div>
+        <div class="help-text">
+          <div class="help-q">Англи үсэг ойлгохгүй байна</div>
+          <div class="help-a">Google Translate аппликэйшн татаж аваарай. Монгол хэлнээ орчуулна. Эсвэл Settings дотор Language (Хэл) олоод "Монгол" сонго.</div>
+        </div>
+      </div>
+      <div class="help-row">
+        <div class="help-icon">🎵</div>
+        <div class="help-text">
+          <div class="help-q">Дуу гарахгүй байна</div>
+          <div class="help-a">Утасны хажуу дахь дуугийн товчоор ихэсгэж үз. Эсвэл дуут горим (mute) асаалттай байж болно — шалгаарай.</div>
+        </div>
+      </div>
+      <div class="help-row">
+        <div class="help-icon">📲</div>
+        <div class="help-text">
+          <div class="help-q">Аппликэйшн устах уу?</div>
+          <div class="help-a">Аппликэйшн устгавал өгөгдлүүд устаж болно. Устгахаасаа өмнө хүүхдүүддээ асуугаарай.</div>
+        </div>
+      </div>
+      <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: #e1f5ee; border-radius: var(--border-radius-lg);">
+        <div style="font-size: 16px; font-weight: 500; color: #0f6e56; margin-bottom: 6px;">Хорооны Сургалт</div>
+        <div style="font-size: 15px; color: #085041; line-height: 1.6;">7 хоногт 1 удаа хорооны танхимд танхимын сургалт болдог. Хэвлэмэл материалтай. Дэлгэрэнгүй мэдээллийг хорооны засаг даргын нарийн бичгийн даргаас лав.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const quizData = [
+  {
+    q: "Та Facebook-д мэдэгдэхгүй хүн найзлахыг хүсвэл яах вэ?",
+    opts: ["Хүлээж авах", "Хүлээж авахгүй байх", "Утасны дугаарыг нь асуух"],
+    correct: 1,
+    explain: "Зөв! Мэдэгдэхгүй хүний хүсэлтийг хүлээн авах шаардлагагүй."
+  },
+  {
+    q: "Нууц үг ямар байх нь аюулгүй вэ?",
+    opts: ["Төрсөн он: 1960", "Хэн нэгний нэр", "Тоо, үсэг холилдсон 8 орон"],
+    correct: 2,
+    explain: "Зөв! Урт, тоо үсэг холилдсон нууц үг хамгийн аюулгүй."
+  },
+  {
+    q: "Гэнэтийн мессежээр 'Та хожлоо! Мөнгөө авахын тулд дансаа өг' гэвэл яах вэ?",
+    opts: ["Дансаа өгөх", "Дансаа өгч туршиж үзэх", "Хариу бичихгүй устгах"],
+    correct: 2,
+    explain: "Зөв! Энэ нь луйвар. Хэзээ ч хариу бичиж болохгүй."
+  },
+  {
+    q: "Видео дуудлага хийх хамгийн хялбар аппликэйшн аль вэ?",
+    opts: ["Excel", "Facebook Messenger эсвэл WhatsApp", "Notepad"],
+    correct: 1,
+    explain: "Зөв! Facebook Messenger болон WhatsApp-аар амархан видео дуудлага хийж болно."
+  },
+  {
+    q: "Утасны батарей 5% байна. Та яах вэ?",
+    opts: ["Зааварчилгааны видео үзэх", "Шууд цэнэглэх", "Бусдад залгах"],
+    correct: 1,
+    explain: "Зөв! Утасны батарей бага байхад аль болох цэнэглэх нь зүйтэй."
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let answered = false;
+let completedLessons = 0;
+
+function renderQuiz() {
+  const c = document.getElementById('quizContainer');
+  if (currentQ >= quizData.length) {
+    c.innerHTML = `
+      <div style="text-align:center; padding: 2rem 1rem;">
+        <div style="font-size: 48px; margin-bottom: 1rem;">🎉</div>
+        <div style="font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px;">Баяр хүргэе!</div>
+        <div style="font-size: 18px; color: var(--color-text-secondary); margin-bottom: 1.5rem)">${quizData.length} асуултаас <span style="color: #1a5c3a; font-weight: 500;">${score}</span> зөв хариулсан байна.</div>
+        <button onclick="restartQuiz()" style="background: #1a5c3a; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 0.75rem 2rem; font-size: 16px; cursor: pointer;">Дахин шалгуулах</button>
+      </div>`;
+    return;
+  }
+  const q = quizData[currentQ];
+  c.innerHTML = `
+    <div style="font-size: 14px; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Асуулт ${currentQ+1} / ${quizData.length}</div>
+    <div class="progress-bar-wrap" style="margin-bottom: 1.5rem;"><div class="progress-bar" style="width: ${(currentQ/quizData.length)*100}%;"></div></div>
+    <div class="quiz-card">
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o,i)=>`<button class="quiz-opt" id="opt${i}" onclick="answer(${i})">${o}</button>`).join('')}
+      </div>
+      <div id="quizResult" class="quiz-result" style="display:none;"></div>
+      <div id="nextBtn" style="display:none; margin-top:1rem; text-align:right;">
+        <button onclick="nextQ()" style="background:#1a5c3a;color:#fff;border:none;border-radius:var(--border-radius-md);padding:0.6rem 1.5rem;font-size:15px;cursor:pointer;">Дараагийн асуулт →</button>
+      </div>
+    </div>`;
+  answered = false;
+}
+
+function answer(i) {
+  if (answered) return;
+  answered = true;
+  const q = quizData[currentQ];
+  const opts = document.querySelectorAll('.quiz-opt');
+  const res = document.getElementById('quizResult');
+  const nb = document.getElementById('nextBtn');
+  opts[q.correct].classList.add('correct');
+  if (i === q.correct) {
+    score++;
+    res.className = 'quiz-result correct';
+    res.textContent = '✓ ' + q.explain;
+    updateProgress();
+  } else {
+    opts[i].classList.add('wrong');
+    res.className = 'quiz-result wrong';
+    res.textContent = '✗ ' + q.explain;
+  }
+  res.style.display = 'block';
+  nb.style.display = 'block';
+}
+
+function nextQ() {
+  currentQ++;
+  renderQuiz();
+}
+
+function restartQuiz() {
+  currentQ = 0; score = 0; renderQuiz();
+}
+
+function updateProgress() {
+  completedLessons = Math.min(completedLessons + 1, 9);
+  const pct = Math.round((completedLessons / 9) * 100);
+  const bar = document.getElementById('progressBar');
+  const num = document.getElementById('progressNum');
+  if (bar) bar.style.width = pct + '%';
+  if (num) num.textContent = pct + '%';
+}
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn')[['home','lessons','safety','quiz','help'].indexOf(name)].classList.add('active');
+  if (name === 'quiz') renderQuiz();
+}
+
+const lessonContent = {
+  videocall: { title: '📹 Видео дуудлага хийх', steps: ['Facebook Messenger аппликэйшнийг нээ', 'Дуудахыг хүсч байгаа хүний нэрийг сонго', 'Камерны зурагтай товчийг дар — энэ нь видео дуудлага', 'Тэр хүн хүлээж авбал таны нүүр харагдана', 'Дуусгахдаа улаан утасны товчийг дар'] },
+  app: { title: '📲 Аппликэйшн татах', steps: ['Play Store (Android) эсвэл App Store (iPhone)-г нээ', 'Дээд хэсгийн хайлтын талбарт аппликэйшний нэрийг бич', 'Хайлтын дүнгээс зөв аппликэйшнийг олоод дар', '"Суулгах" эсвэл "Install" товчийг дар', 'Хүлээ — суусны дараа нүүр хуудсанд гарч ирнэ'] },
+  egov: { title: '🏛️ Е-Засаг үйлчилгээ', steps: ['E-Mongolia аппликэйшнийг Play Store-с татаж ав', 'Регистрийн дугаараа оруулан бүртгүүл', 'Үйлчилгээний жагсаалтаас хэрэгтэй зүйлээ сонго', 'Мэдээллийг дүүргэж "Илгээх" товчийг дар', 'Хариуг мессежний дугаараар хүлээж ав'] },
+  search: { title: '🔍 Мэдээлэл хайх', steps: ['Chrome эсвэл Safari браузерийг нээ', 'Дээд хэсэгт байгаа хайлтын талбарт дар', 'Хайхыг хүссэн зүйлийг Монголоор бич', 'Зурган дарсны дараа хайлт гарна', 'Хайлтын дүнгээс уншихыг хүссэн линкээ дар'] },
+  photo: { title: '📸 Зураг илгээх', steps: ['Мессеж аппликэйшнийг нээ', 'Илгээхийг хүсч байгаа хүнд яриаг нээ', 'Зурганцрын (📎 эсвэл +) товчийг дар', 'Галерейгаас зургаа сонго', 'Илгээх товчийг дар'] },
+  password: { title: '🔒 Нууц үг солих', steps: ['Утасны "Тохиргоо" (Settings)-г нээ', '"Аюулгүй байдал" эсвэл "Security" гэснийг сонго', '"Дэлгэцийн түгжээ" гэснийг сонго', 'Шинэ нууц үгийг тоо, үсэг холилдуулж оруул', 'Баталгаажуулахын тулд дахин оруул'] },
+  shop: { title: '🛒 Онлайн худалдаа', steps: ['Итгэмжтэй сайтыг л ашиглаарай (Amazon, Taobao, итгэлтэй Монгол дэлгүүрүүд)', 'Бараанаа сонгоод сагсанд хийх товчийг дар', 'Хаяг, холбоо барих мэдээллийг бөглө', 'Төлбөрийн мэдээллийг анхааралтай оруул', 'Захиалгаа батлагаажуулаад хаягтаа хүлээж ав'] },
+  bank: { title: '🏦 Банкны аппликэйшн', steps: ['Банкны албан ёсны аппликэйшнийг татаж ав', 'Дансны дугаар болон нууц үгийг оруулаад нэвтэр', '"Гүйлгээ" эсвэл "Шилжүүлэх" товчийг сонго', 'Хүлээн авагчийн дансны дугаарыг оруул', 'Дүн оруулаад батлах товчийг дар'] },
+  settings: { title: '⚙️ Утасны тохиргоо', steps: ['Утасны "Тохиргоо" (Settings)-г нээ', '"Дэлгэц" эсвэл "Display" гэснийг сонго', 'Гэрлийг (Brightness) та хэрэгтэй хэмжээнд тааруул', '"Фонтын хэмжээ" (Font size) дотор үсгийн хэмжээг томруул', '"Дуу" (Sound) дотор дуугаа тохируул'] }
+};
+
+function openLesson(key) {
+  const l = lessonContent[key];
+  const d = document.getElementById('lessonDetail');
+  d.style.display = 'block';
+  d.innerHTML = `
+    <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.5rem; border: 0.5px solid #1a5c3a;">
+      <div style="font-size: 19px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 1rem;">${l.title}</div>
+      ${l.steps.map((s,i)=>`
+        <div style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px;">
+          <div style="min-width: 28px; height: 28px; background: #1a5c3a; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 500; flex-shrink: 0;">${i+1}</div>
+          <div style="font-size: 16px; color: var(--color-text-primary); line-height: 1.6; padding-top: 4px;">${s}</div>
+        </div>`).join('')}
+      <div style="margin-top: 1rem; text-align: right;">
+        <button onclick="markDone()" style="background: #1a5c3a; color: #fff; border: none; border-radius: var(--border-radius-md); padding: 0.6rem 1.5rem; font-size: 15px; cursor: pointer;">✓ Сурлаа!</button>
+      </div>
+    </div>`;
+  d.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+function markDone() {
+  updateProgress();
+  const d = document.getElementById('lessonDetail');
+  d.innerHTML = `<div class="tip-box"><div class="tip-icon">🎉</div><div class="tip-text" style="font-size: 17px;">Баяр хүргэе! Хичээлийг дүүргэлээ.</div></div>`;
+}
+
+function setFont(size) {
+  const site = document.getElementById('mainSite');
+  const sizes = { normal: '15px', large: '17px', xlarge: '20px' };
+  site.style.fontSize = sizes[size];
+  document.querySelectorAll('.font-btn').forEach(b => b.classList.remove('active-size'));
+  event.target.classList.add('active-size');
+}
+</script>
